@@ -2,7 +2,7 @@ pipeline{
        agent {
                docker{
                   image 'maven:3.8.3-openjdk-17' 
-                  args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+                  args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
                 }
             }
     environment{
@@ -11,7 +11,7 @@ pipeline{
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
        APP_CONTAINER= 'paymybuddy-jenkins'
-       EXT_PORT= "8080"
+       EXT_PORT= "8081"
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
