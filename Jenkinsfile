@@ -44,7 +44,7 @@ pipeline{
             steps{
                 script{
                 sh """
-                   docker build -t $IMAGE_NAME:$TAG .
+                  sudo docker build -t $IMAGE_NAME:$TAG .
                 """
                 }
             }
