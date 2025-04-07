@@ -25,7 +25,6 @@ pipeline{
                 script{
                  sh 'ls -al'
                  sh 'pwd'
-                 sh 'apt-get update && apt-get install -y libc6'
                  sh 'ldd --version'
                 }
                  
