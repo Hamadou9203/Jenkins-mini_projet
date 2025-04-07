@@ -29,39 +29,7 @@ pipeline{
                  
             }
         }
-        stage('demarrer la base sql '){
-            
-            steps{
-                
-                script{
-                    sh """
-                    docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD} -d mysql
-                    """
-                    
-                }
-            }
-            
-        }
         
-        stage('initialisation de la bdd'){
-            steps{
-                script{
-                    // Attendez que MySQL soit prêt à accepter les connexions
-                    sh """
-                    until docker exec ${MYSQL_CONTAINER} mysqladmin -u root -p ${ROOT_PASSWORD} ping --silent; do
-                        echo "Waiting for MySQL to be ready..."
-                        sleep 10
-                    done
-                    echo "MySQL is ready!"
-                    """
-                    // Exécuter le script SQL pour initialiser la base de données
-                    sh """
-                    docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB}
-                    """
-                }
-            }
-
-        }
         stage('install maven '){
             
             steps{
