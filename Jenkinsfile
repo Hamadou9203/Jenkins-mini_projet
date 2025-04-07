@@ -114,7 +114,7 @@ pipeline{
         }
         stage("Deploy-staging"){
             when{
-              expression { GIT_BRANCH == 'origin/master' }
+              expression { GIT_BRANCH == 'origin/mmain' }
               
             }
             steps{
@@ -138,7 +138,7 @@ pipeline{
         stage('test staging'){
             agent any 
             when{
-              expression { GIT_BRANCH == 'origin/master' }
+              expression { GIT_BRANCH == 'origin/main' }
              
             }
             steps{
