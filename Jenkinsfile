@@ -106,8 +106,8 @@ pipeline{
                 script{
                    sh '''
                       echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER --password-stdin
-                      docker tag $IMAGE_NAME:$TAG $USR_REGISTRY/$IMAGE_NAME:$TAG
-                      docker push $USR_REGISTRY/$IMAGE_NAME:$TAG
+                      docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:$TAG
+                      docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
                    '''
                 }
             }
