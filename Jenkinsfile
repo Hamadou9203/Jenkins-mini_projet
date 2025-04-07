@@ -30,7 +30,7 @@ pipeline{
             }
         }
         stage('demarrer la base sql '){
-            agent any
+            
             steps{
                 
                 script{
