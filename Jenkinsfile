@@ -19,14 +19,7 @@ pipeline{
        STG_URL="ec2-3-82-142-101.compute-1.amazonaws.com"
     }
     stages{
-        stage('recuperer les codes de git'){
-            steps{
-                script{
-                 checkout scm
-                }
-                 
-            }
-        }
+
         stage('demarrer la base sql '){
             steps{
                 script{
