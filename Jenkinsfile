@@ -25,6 +25,7 @@ pipeline{
                 script{
                  sh 'ls -al'
                  sh 'pwd'
+                 sh 'ldd --version'
                 }
                  
             }
