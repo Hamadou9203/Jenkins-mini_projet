@@ -24,12 +24,14 @@ pipeline{
             steps{
                 script{
                  sh 'ls -al'
+                 sh 'pwd'
                 }
                  
             }
         }
         stage('demarrer la base sql '){
             steps{
+                agent any
                 script{
                     sh """
                     docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD} -d mysql
