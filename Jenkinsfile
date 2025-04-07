@@ -15,7 +15,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       TAG=$BUILD_ID
+       TAG="${env.BUILD_ID}"
        STG_URL="ec2-3-82-142-101.compute-1.amazonaws.com"
     }
     stages{
