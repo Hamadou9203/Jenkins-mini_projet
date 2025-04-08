@@ -156,6 +156,7 @@ pipeline{
             }
             steps{
                 script{
+                    sh 'sleep 40'
                     sh 'apk --no-cache  add curl'
                     echo " test staging"
                     sh " curl http://${STG_URL}:$EXT_PORT "
