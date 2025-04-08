@@ -17,7 +17,7 @@ pipeline{
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
        TAG="${env.BUILD_ID}"
-       STG_URL="ec2-54-144-119-111.compute-1.amazonaws.com"
+       STG_URL="ec2-34-207-235-141.compute-1.amazonaws.com"
        ROOT_PASSWORD=credentials('mysql-password')
     }
    
