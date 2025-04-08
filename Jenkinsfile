@@ -8,6 +8,7 @@ pipeline{
     environment{
        MYSQL_CONTAINER = 'mysql-paymybuddy' 
        INIT_DB= '/app/src/main/resources/database/create.sql'
+       DB_DIR='/tmp/create.sql'
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
        APP_CONTAINER= 'paymybuddy-jenkins'
@@ -62,8 +63,9 @@ pipeline{
                    
                     // Exécuter le script SQL pour initialiser la base de données
                     sh 'ls -al /app/src/main/resources/database/'
+                    sh 'docker cp ${INIT_DB} ${MYSQL_CONTAINER}:$DB_DIR'
                     
-                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD} -h $DOMAIN < ${INIT_DB} '
+                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${DB_DIR} '
                 }
             }
 
