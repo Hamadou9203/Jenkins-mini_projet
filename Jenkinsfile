@@ -42,6 +42,8 @@ pipeline{
             steps{
                 script{
                     sh """
+                    docker stop ${MYSQL_CONTAINER}  || echo 'no container is running'
+                    docker rm ${MYSQL_CONTAINER}  || echo 'no container is running'
                     docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD} -d mysql
                     """
                     
