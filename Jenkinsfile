@@ -1,8 +1,9 @@
 pipeline{
-       agent {
+    agent {
                docker{
-                  image 'maven:3.8.5-openjdk-17'
-                  args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
+                  image 'docker:dind' 
+                  label 'docker'
+                  args '-v /tmp/app:~'
                 }
             }
     environment{
@@ -11,32 +12,65 @@ pipeline{
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
        APP_CONTAINER= 'paymybuddy-jenkins'
-       EXT_PORT= "8081"
+       EXT_PORT= "8080"
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
        TAG="${env.BUILD_ID}"
-       STG_URL="ec2-3-82-142-101.compute-1.amazonaws.com"
+       STG_URL="ec2-54-144-119-111.compute-1.amazonaws.com"
     }
+   
     stages{
-         
         stage('recuperer les codes de git'){
             steps{
                 script{
-                 sh 'ls -al'
-                 sh 'pwd'
-                 sh 'ldd --version'
+                 checkout scm
                 }
                  
             }
         }
-        
-        stage('install maven '){
+        stage('demarrer la base sql '){
+            steps{
+                script{
+                    sh """
+                    docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD} -d mysql
+                    """
+                    
+                }
+            }
             
+        }
+        
+        stage('initialisation de la bdd'){
+            steps{
+                script{
+                    // Attendez que MySQL soit prêt à accepter les connexions
+                    sh """
+                    until docker exec ${MYSQL_CONTAINER} mysqladmin -u root -p ${ROOT_PASSWORD} ping --silent; do
+                        echo "Waiting for MySQL to be ready..."
+                        sleep 10
+                    done
+                    echo "MySQL is ready!"
+                    """
+                    // Exécuter le script SQL pour initialiser la base de données
+                    sh """
+                    docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB}
+                    """
+                }
+            }
+
+        }
+        stage('install maven '){
+            agent {
+               docker{
+                  image 'maven:3.8.5-openjdk-17' 
+                   args '-v /tmp/app:/app'
+                }
+            }
             steps{
                 script {
                    echo 'building the projet with maven'
-                   sh 'mvn clean install'
+                   sh 'cd /app && mvn clean install'
                 } 
             }
         }
@@ -78,7 +112,7 @@ pipeline{
             steps{
                 script{
                    sh '''
-                      echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER --password-stdin
+                      echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER--password-stdin
                       docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:$TAG
                       docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
                    '''
@@ -87,7 +121,7 @@ pipeline{
         }
         stage("Deploy-staging"){
             when{
-              expression { GIT_BRANCH == 'origin/mmain' }
+              expression { GIT_BRANCH == 'origin/main' }
               
             }
             steps{
