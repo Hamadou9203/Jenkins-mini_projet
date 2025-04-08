@@ -58,6 +58,7 @@ pipeline{
                    
                     // Exécuter le script SQL pour initialiser la base de données
                     sh """
+                    ls -al src/main/resources/database/
                     docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB}
                     """
                 }
