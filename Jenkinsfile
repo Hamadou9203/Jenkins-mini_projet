@@ -97,7 +97,7 @@ pipeline{
         stage('test Acceptance'){
             agent {
                 docker{
-                    image: alpine
+                    image 'alpine'
                 }
             }
             steps{
