@@ -102,7 +102,7 @@ pipeline{
             }
             steps{
                 script{
-                    sh 'apk --no-cache  addd curl'
+                    sh 'apk --no-cache  add curl'
                     sh 'curl http://$DOMAIN:$EXT_PORT '
                 }
             }
