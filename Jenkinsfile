@@ -114,7 +114,7 @@ pipeline{
             steps{
                 script{
                    sh '''
-                      echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER--password-stdin
+                      echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER --password-stdin
                       docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:$TAG
                       docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
                    '''
@@ -145,13 +145,18 @@ pipeline{
 
         }
         stage('test staging'){
-            agent any 
+            agent {
+                docker{
+                    image 'alpine'
+                }
+            }
             when{
               expression { GIT_BRANCH == 'origin/main' }
              
             }
             steps{
                 script{
+                    sh 'apk --no-cache  add curl'
                     echo " test staging"
                     sh " curl http://${STG_URL}:$EXT_PORT "
                 }  
