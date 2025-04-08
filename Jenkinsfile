@@ -2,7 +2,7 @@ pipeline{
     agent {
                docker{
                   image 'docker:dind'
-                  args '-v /tmp/app:/var/jenkins_home/workspace/paymybuddy'
+                  args '-v /tmp/app:/app'
                 }
             }
     environment{
@@ -34,6 +34,7 @@ pipeline{
                 script{
                  sh 'ls -al'
                  sh 'pwd'
+                 sh ' mv * /app'
                 }
                  
             }
@@ -58,7 +59,7 @@ pipeline{
                    
                     // Exécuter le script SQL pour initialiser la base de données
                     sh """
-                    ls -al src/main/resources/database/
+                    ls -al /app/src/main/resources/database/
                     docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB}
                     """
                 }
