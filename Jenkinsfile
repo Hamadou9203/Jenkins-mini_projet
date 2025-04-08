@@ -65,7 +65,7 @@ pipeline{
                     sh 'ls -al /app/src/main/resources/database/'
                     sh 'docker cp ${INIT_DB} ${MYSQL_CONTAINER}:$DB_DIR'
                     
-                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${DB_DIR} '
+                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB} '
                 }
             }
 
