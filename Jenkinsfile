@@ -1,8 +1,7 @@
 pipeline{
     agent {
                docker{
-                  image 'docker:dind' 
-                  label 'docker'
+                  image 'docker:dind'
                   args '-v /tmp/app:~'
                 }
             }
@@ -25,6 +24,15 @@ pipeline{
             steps{
                 script{
                  checkout scm
+                }
+                 
+            }
+        }
+        stage('se situer'){
+            steps{
+                script{
+                 sh 'ls -al'
+                 sh 'pwd'
                 }
                  
             }
