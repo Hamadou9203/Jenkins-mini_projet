@@ -43,12 +43,11 @@ pipeline{
         stage('demarrer la base sql '){
             steps{
                 script{
-                    sh '
+                    sh '''
                     docker stop ${MYSQL_CONTAINER}  || echo "no container is running"
                     docker rm ${MYSQL_CONTAINER}  || echo "no container is running"
-                    docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql
-                    '
-                    
+                    '''
+                    sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
                 }
             }
             
@@ -59,10 +58,9 @@ pipeline{
                 script{
                    
                     // Exécuter le script SQL pour initialiser la base de données
-                    sh '
-                    ls -al /app/src/main/resources/database/
-                    docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB}
-                    '
+                    sh 'ls -al /app/src/main/resources/database/'
+                    
+                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB} '
                 }
             }
 
