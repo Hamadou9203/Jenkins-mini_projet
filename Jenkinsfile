@@ -2,7 +2,7 @@ pipeline{
     agent {
                docker{
                   image 'docker:dind'
-                  args '-v /tmp/app:/app -v /var/run/docker.sock:/var/run/docker.sock'
+                  args '-v /tmp/app:/app '
                 }
             }
     environment{
@@ -63,7 +63,7 @@ pipeline{
                     // Exécuter le script SQL pour initialiser la base de données
                     sh 'ls -al /app/src/main/resources/database/'
                     
-                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB} '
+                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD} -h $DOMAIN < ${INIT_DB} '
                 }
             }
 
