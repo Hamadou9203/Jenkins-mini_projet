@@ -7,7 +7,7 @@ pipeline{
             }
     environment{
        MYSQL_CONTAINER = 'mysql-paymybuddy' 
-       INIT_DB= '/app/src/main/resources/database/create.sql'
+       INIT_DB= 'tmp/app/src/main/resources/database/create.sql'
        DB_DIR='/tmp/create.sql'
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
@@ -51,7 +51,7 @@ pipeline{
                     docker stop ${MYSQL_CONTAINER}  || echo "no container is running"
                     docker rm ${MYSQL_CONTAINER}  || echo "no container is running"
                     '''
-                    sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306  -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
+                    sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
                 }
             }
             
