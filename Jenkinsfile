@@ -12,7 +12,7 @@ pipeline{
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
        CONTAINER_NAME= 'paymybuddy-jenkins'
-       EXT_PORT= "8080"
+       EXT_PORT= "8085"
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
