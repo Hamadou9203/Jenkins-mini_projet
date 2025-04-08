@@ -34,8 +34,7 @@ pipeline{
                 script{
                  sh 'ls -al'
                  sh 'pwd'
-                 sh ' mv -T .* /app/'
-                 sh ' mv -T * /app/'
+                 sh ' mv -t * .* /app/'
                  sh 'ls -al /app'
                 }
                  
