@@ -57,19 +57,6 @@ pipeline{
             
         }
         
-        stage('initialisation de la bdd'){
-            steps{
-                script{
-                   
-                    // Exécuter le script SQL pour initialiser la base de données
-                    sh 'ls -al /app/src/main/resources/database/'
-                    sh 'docker cp ${INIT_DB} ${MYSQL_CONTAINER}:$DB_DIR'
-                    
-                    sh 'docker exec -i ${MYSQL_CONTAINER} mysql -u root -p ${ROOT_PASSWORD}  < ${INIT_DB} '
-                }
-            }
-
-        }
         stage('install maven '){
             agent {
                docker{
