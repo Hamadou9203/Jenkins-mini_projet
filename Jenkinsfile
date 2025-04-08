@@ -2,7 +2,7 @@ pipeline{
     agent {
                docker{
                   image 'docker:dind'
-                  args '-v /tmp/app:/app'
+                  args '-v /tmp/app:/app -v /var/run/docker.sock:/var/run/docker.sock'
                 }
             }
     environment{
