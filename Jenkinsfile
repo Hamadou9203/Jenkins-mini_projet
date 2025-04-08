@@ -35,7 +35,7 @@ pipeline{
                  sh '''
                     ls -al
                     pwd
-                    rm -rf /app/*
+                    rm -rf /app/.* /app/*
                     mv  * .*  /app/
                     ls -al /app
                     '''
