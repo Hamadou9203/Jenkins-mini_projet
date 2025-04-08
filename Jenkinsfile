@@ -95,9 +95,14 @@ pipeline{
             }
         }
         stage('test Acceptance'){
-            agent any
+            agent {
+                docker{
+                    image: alpine
+                }
+            }
             steps{
                 script{
+                    sh 'apk --no-cache  addd curl'
                     sh 'curl http://$DOMAIN:$EXT_PORT '
                 }
             }
