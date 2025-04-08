@@ -32,11 +32,13 @@ pipeline{
         stage('se situer'){
             steps{
                 script{
-                 sh 'ls -al'
-                 sh 'pwd'
-                 sh ' rm -rf /app/*
-                 sh ' mv  * .*  /app/'
-                 sh 'ls -al /app'
+                 sh '''
+                    ls -al
+                    pwd
+                    rm -rf /app/*
+                    mv  * .*  /app/
+                    ls -al /app
+                    '''
                 }
                  
             }
