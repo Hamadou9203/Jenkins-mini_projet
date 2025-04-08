@@ -11,7 +11,7 @@ pipeline{
        DB_DIR='/tmp/create.sql'
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
-       APP_CONTAINER= 'paymybuddy-jenkins'
+       CONTAINER_NAME= 'paymybuddy-jenkins'
        EXT_PORT= "8080"
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
