@@ -2,7 +2,7 @@ pipeline{
     agent {
                docker{
                   image 'docker:dind'
-                  args '-v /tmp/app:~'
+                  args '-v /tmp/app:/home'
                 }
             }
     environment{
