@@ -76,7 +76,7 @@ pipeline{
             steps{
                 script{
                 sh """
-                   docker build -t $IMAGE_NAME:$TAG .
+                  cd /app && docker build -t $IMAGE_NAME:$TAG .
                 """
                 }
             }
