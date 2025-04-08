@@ -7,7 +7,7 @@ pipeline{
             }
     environment{
        MYSQL_CONTAINER = 'mysql-paymybuddy' 
-       INIT_DB= 'src/main/resources/database/create.sql'
+       INIT_DB= '/app/src/main/resources/database/create.sql'
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
        APP_CONTAINER= 'paymybuddy-jenkins'
