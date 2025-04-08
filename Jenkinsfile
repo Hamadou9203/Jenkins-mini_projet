@@ -2,7 +2,7 @@ pipeline{
     agent {
                docker{
                   image 'docker:dind'
-                  args '-v /tmp/app:/home'
+                  args '-v /tmp/app:/var/jenkins_home/workspace/paymybuddy'
                 }
             }
     environment{
@@ -17,6 +17,7 @@ pipeline{
        SSH_USER="ubuntu"
        TAG="${env.BUILD_ID}"
        STG_URL="ec2-54-144-119-111.compute-1.amazonaws.com"
+       ROOT_PASSWORD=credentials('mysql-password')
     }
    
     stages{
