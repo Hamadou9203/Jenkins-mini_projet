@@ -176,12 +176,10 @@ pipeline{
             steps{
                 script{
                     deploy("prod", $PROD_URL, $REGISTRY_USER, $IMAGE_NAME, $TAG, $CONTAINER_NAME, $EXT_PORT, $INT_PORT, $SSH_USER)
-                    }
-
                 }
-            }
 
-        }
+            }
+         }
         stage('test production'){
             agent {
                 docker{
