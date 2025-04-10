@@ -223,7 +223,7 @@ def deploy(envrt, url, dockerUser, imageName, tag, containerName,extport,intport
     def pullcmd="docker pull $dockerUser/$imageName:$tag"
     def stopcmd=" docker stop $containerName || echo 'Container not running'"
     def rmvcmd=" docker rm $containerName || echo 'Container not found'"
-    def runcmd="docker run -d -p $extport:$intport  --name $containerName $dockerUser}/$imageName:$tag"
+    def runcmd="docker run -d -p $extport:$intport  --name $containerName $dockerUser/$imageName:$tag"
     sshagent(['aws-credentials']){
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${stopcmd}"
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${rmvcmd}"
