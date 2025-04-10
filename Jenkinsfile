@@ -87,7 +87,9 @@ pipeline{
                        -v "$REPO:/usr/src" \
                         sonarsource/sonar-scanner-cli \
                         -Dsonar.projectKey=mon-projet-jenkins \
-                        -Dsonar.organization=hamadou9203
+                        -Dsonar.organization=hamadou9203 \
+                        -Dsonar.sources=src/main/java \
+                        -Dsonar.java.binaries=target/classes
                     '''
                 }
             }
