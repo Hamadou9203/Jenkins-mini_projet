@@ -17,6 +17,8 @@ pipeline{
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
        TAG="${env.BUILD_ID}"
+       REPO= "/tmp/app"
+       SONARQUBE_UR  = "sonarcloud.io"
        STG_URL="ec2-34-207-235-141.compute-1.amazonaws.com"
        ROOT_PASSWORD=credentials('mysql-password')
     }
@@ -34,14 +36,29 @@ pipeline{
             steps{
                 script{
                  sh '''
-                    ls -al
-                    pwd
                     rm -rf /app/.mvn /app/*
                     mv  * .mvn  /app/
-                    ls -al /app
                     '''
                 }
                  
+            }
+        }
+        stage('analyse statique '){
+            environment{
+               TOKEN = credentials('token-sonar')
+            }
+            steps{
+                script{
+                    sh 'echo " starting sonnar scanning"'
+                    sh '''
+                     docker run \
+                       --rm \
+                       -e SONAR_HOST_URL="https://${SONARQUBE_URL}"  \
+                       -e SONAR_TOKEN=$TOKEN \
+                       -v "$REPO:/usr/src" \
+                        sonarsource/sonar-scanner-cli
+                    '''
+                }
             }
         }
         stage('demarrer la base sql '){
@@ -102,8 +119,7 @@ pipeline{
             }
             steps{
                 script{
-                    sh 'apk --no-cache  add curl'
-                    sh 'curl http://$DOMAIN:$EXT_PORT '
+                    test("acceptance",$DOMAIN, $EXT_PORT)
                 }
             }
         }
@@ -128,16 +144,7 @@ pipeline{
             }
             steps{
                 script{
-                    echo "deploying to shell-script to ec2 en staging"
-                    def pullcmd="docker pull $REGISTRY_USER/$IMAGE_NAME:$TAG"
-                    def stopcmd=" docker stop $CONTAINER_NAME || echo 'Container not running'"
-                    def rmvcmd=" docker rm $CONTAINER_NAME || echo 'Container not found'"
-                    def runcmd="docker run -d -p $EXT_PORT:$INT_PORT  --name $CONTAINER_NAME $REGISTRY_USER/$IMAGE_NAME:$TAG"
-                    sshagent(['aws-credentials']){
-                       sh "ssh -o StrictHostKeyChecking=no $SSH_USER@${STG_URL} ${stopcmd}"
-                       sh "ssh -o StrictHostKeyChecking=no $SSH_USER@${STG_URL} ${rmvcmd}"
-                       sh "ssh -o StrictHostKeyChecking=no $SSH_USER@${STG_URL} ${pullcmd}"
-                       sh "ssh -o StrictHostKeyChecking=no $SSH_USER@${STG_URL} ${runcmd}"
+                    deploy("staging", $STG_URL, $REGISTRY_USER, $IMAGE_NAME, $TAG, $CONTAINER_NAME, $EXT_PORT, $INT_PORT, $SSH_USER)
                     }
 
                 }
@@ -156,13 +163,45 @@ pipeline{
             }
             steps{
                 script{
-                    sh 'sleep 40'
-                    sh 'apk --no-cache  add curl'
-                    echo " test staging"
-                    sh " curl http://${STG_URL}:$EXT_PORT "
+                  test("staging",$STG_URL, $EXT_PORT) 
                 }  
+            }
+        }
+        stage('clen up environement '){
+            steps{
+                script{
+                    sh """
+                     docker stop ${CONTAINER_NAME} 
+                     docker rm ${CONTAINER_NAME} 
+                     docker stop ${MYSQL_CONTAINER} 
+                     docker rm ${MYSQL_CONTAINER} 
+                     docker rmi $IMAGE_NAME:$TAG
+                     docker rmi mysql
+                    """
+                }
             }
         }
 
     }
+}
+
+def deploy(envrt, url, dockerUser, imageName, tag, containerName,extport,intport,sshUser ){
+    echo "deploying to shell-script to ec2 en ${envrt}"
+    def pullcmd="docker pull $dockerUser}/$imageName:$tag"
+    def stopcmd=" docker stop $containerName || echo 'Container not running'"
+    def rmvcmd=" docker rm $containerName || echo 'Container not found'"
+    def runcmd="docker run -d -p $extport:$intport  --name $containerName $dockerUser}/$imageName:$tag"
+    sshagent(['aws-credentials']){
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${stopcmd}"
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${rmvcmd}"
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${pullcmd}"
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${runcmd}"
+}
+}
+
+def test(url, envrt, extport){
+   sh 'sleep 40'
+   sh 'apk --no-cache  add curl'
+   echo " test ${envrt}"
+   sh " curl http://${url}:$extport "
 }
