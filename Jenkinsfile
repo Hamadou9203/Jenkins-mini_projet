@@ -124,7 +124,7 @@ pipeline{
             }
             steps{
                 script{
-                    test("acceptance",$DOMAIN, $EXT_PORT)
+                    test("acceptance",${env.DOMAIN}, ${env.EXT_PORT})
                 }
             }
         }
