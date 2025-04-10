@@ -149,7 +149,7 @@ pipeline{
             }
             steps{
                 script{
-                    deploy("staging", $STG_URL, $REGISTRY_USER, $IMAGE_NAME, $TAG, $CONTAINER_NAME, $EXT_PORT, $INT_PORT, $SSH_USER)
+                    deploy("staging", "${env.STG_URL}", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
                     }
 
                 }
@@ -168,7 +168,7 @@ pipeline{
             }
             steps{
                 script{
-                  test("staging",$STG_URL, $EXT_PORT) 
+                  test("staging","${env.STG_URL}", "${env.EXT_PORT}") 
                 }  
             }
         }
@@ -179,7 +179,7 @@ pipeline{
             }
             steps{
                 script{
-                    deploy("prod", $PROD_URL, $REGISTRY_USER, $IMAGE_NAME, $TAG, $CONTAINER_NAME, $EXT_PORT, $INT_PORT, $SSH_USER)
+                    deploy("prod", "${env.PROD_URL}", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
                 }
 
             }
@@ -196,7 +196,7 @@ pipeline{
             }
             steps{
                 script{
-                  test("prod",$PROD_URL, $EXT_PORT) 
+                  test("prod","${env.PROD_URL}", "${env.EXT_PORT}") 
                 }  
             }
         }
@@ -232,7 +232,7 @@ def deploy(envrt, url, dockerUser, imageName, tag, containerName,extport,intport
 }
 }
 
-def test(url, envrt, extport){
+def test(envrt, url, extport){
    sh 'sleep 40'
    sh 'apk --no-cache  add curl'
    echo " test ${envrt}"
