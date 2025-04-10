@@ -44,26 +44,7 @@ pipeline{
                  
             }
         }
-        stage('analyse statique '){
-            environment{
-               TOKEN = credentials('token-sonar')
-            }
-            steps{
-                script{
-                    sh 'echo " starting sonnar scanning"'
-                    sh '''
-                     docker run \
-                       --rm \
-                       -e SONAR_HOST_URL="https://${SONARQUBE_URL}"  \
-                       -e SONAR_TOKEN=$TOKEN \
-                       -v "$REPO:/usr/src" \
-                        sonarsource/sonar-scanner-cli \
-                        -Dsonar.projectKey=mon-projet-jenkins \
-                        -Dsonar.organization=hamadou9203
-                    '''
-                }
-            }
-        }
+        
         stage('demarrer la base sql '){
             steps{
                 script{
@@ -91,7 +72,26 @@ pipeline{
                 } 
             }
         }
-        
+        stage('analyse statique '){
+            environment{
+               TOKEN = credentials('token-sonar')
+            }
+            steps{
+                script{
+                    sh 'echo " starting sonnar scanning"'
+                    sh '''
+                     docker run \
+                       --rm \
+                       -e SONAR_HOST_URL="https://${SONARQUBE_URL}"  \
+                       -e SONAR_TOKEN=$TOKEN \
+                       -v "$REPO:/usr/src" \
+                        sonarsource/sonar-scanner-cli \
+                        -Dsonar.projectKey=mon-projet-jenkins \
+                        -Dsonar.organization=hamadou9203
+                    '''
+                }
+            }
+        }
         stage('build de image'){
             steps{
                 script{
