@@ -57,9 +57,9 @@ pipeline{
                        -e SONAR_HOST_URL="https://${SONARQUBE_URL}"  \
                        -e SONAR_TOKEN=$TOKEN \
                        -v "$REPO:/usr/src" \
-                       -Dsonar.projectKey=mon-projet-jenkins
-                       -Dsonar.organization=hamadou9203
                         sonarsource/sonar-scanner-cli
+                        -Dsonar.projectKey=mon-projet-jenkins
+                        -Dsonar.organization=hamadou9203
                     '''
                 }
             }
