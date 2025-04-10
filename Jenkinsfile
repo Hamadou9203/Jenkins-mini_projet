@@ -220,7 +220,7 @@ pipeline{
 
 def deploy(envrt, url, dockerUser, imageName, tag, containerName,extport,intport,sshUser ){
     echo "deploying to shell-script to ec2 en ${envrt}"
-    def pullcmd="docker pull $dockerUser}/$imageName:$tag"
+    def pullcmd="docker pull $dockerUser/$imageName:$tag"
     def stopcmd=" docker stop $containerName || echo 'Container not running'"
     def rmvcmd=" docker rm $containerName || echo 'Container not found'"
     def runcmd="docker run -d -p $extport:$intport  --name $containerName $dockerUser}/$imageName:$tag"
