@@ -19,7 +19,8 @@ pipeline{
        TAG="${env.BUILD_ID}"
        REPO= "/tmp/app"
        SONARQUBE_UR  = "sonarcloud.io"
-       STG_URL="ec2-34-207-235-141.compute-1.amazonaws.com"
+       STG_URL="ec2-18-208-223-232.compute-1.amazonaws.com"
+       PROD_URL="ec2-54-204-232-85.compute-1.amazonaws.com"
        ROOT_PASSWORD=credentials('mysql-password')
     }
    
@@ -164,6 +165,36 @@ pipeline{
             steps{
                 script{
                   test("staging",$STG_URL, $EXT_PORT) 
+                }  
+            }
+        }
+        stage("Deploy-production"){
+            when{
+              expression { GIT_BRANCH == 'origin/main' }
+              
+            }
+            steps{
+                script{
+                    deploy("prod", $PROD_URL, $REGISTRY_USER, $IMAGE_NAME, $TAG, $CONTAINER_NAME, $EXT_PORT, $INT_PORT, $SSH_USER)
+                    }
+
+                }
+            }
+
+        }
+        stage('test production'){
+            agent {
+                docker{
+                    image 'alpine'
+                }
+            }
+            when{
+              expression { GIT_BRANCH == 'origin/main' }
+             
+            }
+            steps{
+                script{
+                  test("prod",$PROD_URL, $EXT_PORT) 
                 }  
             }
         }
