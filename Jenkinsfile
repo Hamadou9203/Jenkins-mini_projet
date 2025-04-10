@@ -149,7 +149,7 @@ pipeline{
                     }
 
                 }
-            }
+            
 
         }
         stage('test staging'){
