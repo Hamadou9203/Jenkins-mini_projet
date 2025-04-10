@@ -18,7 +18,7 @@ pipeline{
        SSH_USER="ubuntu"
        TAG="${env.BUILD_ID}"
        REPO= "/tmp/app"
-       SONARQUBE_UR  = "sonarcloud.io"
+       SONARQUBE_URL  = "sonarcloud.io"
        STG_URL="ec2-18-208-223-232.compute-1.amazonaws.com"
        PROD_URL="ec2-54-204-232-85.compute-1.amazonaws.com"
        ROOT_PASSWORD=credentials('mysql-password')
