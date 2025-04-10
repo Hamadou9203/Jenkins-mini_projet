@@ -217,6 +217,20 @@ pipeline{
         }
 
     }
+    post {
+        always {
+            // Nettoyage après le pipeline
+            echo 'Pipeline terminé'
+        }
+
+        success {
+            echo 'Infrastructure déployée avec succès'
+        }
+
+        failure {
+            echo 'Échec du déploiement'
+        }
+    }
 }
 
 def deploy(envrt, url, dockerUser, imageName, tag, containerName,extport,intport,sshUser ){
