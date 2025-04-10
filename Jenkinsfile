@@ -209,6 +209,7 @@ pipeline{
                      docker stop ${MYSQL_CONTAINER} 
                      docker rm ${MYSQL_CONTAINER} 
                      docker rmi $IMAGE_NAME:$TAG
+                     docker rmi $REGISTRY_USER/$IMAGE_NAME:$TAG
                      docker rmi mysql
                     """
                 }
