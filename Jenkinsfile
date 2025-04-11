@@ -118,13 +118,6 @@ pipeline{
                 }
             }
         }
-         stage('test val pr'){
-            steps{
-                script{
-                    echo "valeur est ${env.CHANGE_ID}"
-                }
-            }
-        }
         stage('test Acceptance'){
             agent {
                 docker{
@@ -138,6 +131,11 @@ pipeline{
             }
         }
         stage("deploy review"){
+            agent {
+               docker{
+                  image 'hashicorp/terraform' 
+                }
+            }
             when{
               expression { GIT_BRANCH == 'origin/dev_features' }
               
