@@ -16,7 +16,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       TAG="${env.GITHUB_HEAD_REF}-${env.GITHUB_SHA}"
+       TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
        STG_URL="ec2-18-208-223-232.compute-1.amazonaws.com"
@@ -138,10 +138,14 @@ pipeline{
             }
         }
         stage("deploy review"){
-            when {
-                expression {
-                    return env.CHANGE_ID != null  // Vérifie si c'est une PR (CHANGE_ID est défini uniquement pour les PR)
+            agent {
+               docker{
+                  image 'hashicorp/terraform' 
                 }
+            }
+            when{
+              expression { GIT_BRANCH == 'origin/dev_features' }
+              
             }
             steps{
                 script{
