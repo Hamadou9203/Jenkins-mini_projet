@@ -118,6 +118,13 @@ pipeline{
                 }
             }
         }
+         stage('test val pr'){
+            steps{
+                script{
+                    echo "valeur est ${env.CHANGE_ID}"
+                }
+            }
+        }
         stage('test Acceptance'){
             agent {
                 docker{
