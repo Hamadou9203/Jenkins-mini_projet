@@ -151,6 +151,13 @@ pipeline{
                     deploy("review", "${publicIp }", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
                 }
             }
+        } 
+        stage('test val pr'){
+            steps{
+                script{
+                    echo 'valeur est ${env.CHANGE_ID } '
+                }
+            }
         }
         stage("verification avant stop  review"){
             when {
