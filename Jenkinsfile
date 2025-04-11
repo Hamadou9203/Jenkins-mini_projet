@@ -135,6 +135,7 @@ pipeline{
                 expression {
                     return env.CHANGE_ID != null  // Vérifie si c'est une PR (CHANGE_ID est défini uniquement pour les PR)
                 }
+            }
             environnement{
                 TAG="${env.CHANGE_BRANCH}-${env.GIT_COMMIT}"
             }
