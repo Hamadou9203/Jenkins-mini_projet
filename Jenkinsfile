@@ -16,7 +16,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}"
+       TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
        STG_URL="ec2-18-208-223-232.compute-1.amazonaws.com"
@@ -137,7 +137,7 @@ pipeline{
                 }
             }
             environment{
-                TAG="${env.CHANGE_BRANCH}-${env.GIT_COMMIT}"
+                TAG="${env.CHANGE_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
             }
             steps{
                 script{
