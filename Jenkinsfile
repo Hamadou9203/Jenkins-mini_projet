@@ -138,13 +138,9 @@ pipeline{
             }
         }
         stage("deploy review"){
-            when {
-                expression {
-                    return env.CHANGE_ID != null  // Vérifie si c'est une PR (CHANGE_ID est défini uniquement pour les PR)
-                }
-            }
-            environment{
-                TAG="${env.CHANGE_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
+            when{
+              expression { GIT_BRANCH == 'origin/dev_features' }
+              
             }
             steps{
                 script{
