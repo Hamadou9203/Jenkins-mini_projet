@@ -16,12 +16,14 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       TAG="${env.BUILD_ID}"
+       TAG="${env.GITHUB_HEAD_REF}-${env.GITHUB_SHA}"
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
        STG_URL="ec2-18-208-223-232.compute-1.amazonaws.com"
        PROD_URL="ec2-54-204-232-85.compute-1.amazonaws.com"
        ROOT_PASSWORD=credentials('mysql-password')
+       AWS_ACCESS_KEY = credentials('aws-access-key-id')
+       AWS_SECRET_KEY = credentials('aws-secret-access-key')
     }
    
     stages{
@@ -125,6 +127,57 @@ pipeline{
             steps{
                 script{
                     test("acceptance","${env.DOMAIN}", "${env.EXT_PORT}")
+                }
+            }
+        }
+        stage("deploy review"){
+            when {
+                expression {
+                    return env.CHANGE_ID != null  // Vérifie si c'est une PR (CHANGE_ID est défini uniquement pour les PR)
+                }
+            }
+            steps{
+                script{
+                    sh' cd /app/review-iac && terraform init'
+                    sh 'sleep 20'
+                    sh 'cd /app/review-iac && terraform validate'
+                    sh 'cd /app/review-iac && terraform apply -auto-approve'
+                    sh 'sleep 60'
+                    def publicIp = sh(script: 'terraform output -raw ec2_public_ip', returnStdout: true)
+                    echo "Instance Public IP: ${publicIp}"
+                    echo "deployement de la base de donnée mysql pour revue"
+                    sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
+                    echo "deploiement de l'application pour la revue"
+                    deploy("review", "${publicIp }", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
+                }
+            }
+        }
+        stage("verification avant stop  review"){
+            when {
+                expression {
+                    return env.CHANGE_ID != null  // Vérifie si c'est une PR (CHANGE_ID est défini uniquement pour les PR)
+                }
+            }
+            steps {
+                script {
+                    // Attendre une action manuelle pour confirmer la destruction des ressources
+                    input message: 'Confirmez-vous la destruction des ressources ?', parameters: [
+                        booleanParam(defaultValue: true, description: 'Confirmer la destruction des ressources', name: 'confirm_destroy')
+                    ]
+                }
+            }
+
+        }
+        stage("stop review"){
+             when {
+                expression {
+                    return env.CHANGE_ID != null  &&  params.confirm_destroy == true
+                }
+            }
+            steps{
+                script{
+                    echo "destruction des ressources"
+                    sh 'cd /app/review-iac && terraform destroy -auto-approve'
                 }
             }
         }
