@@ -130,6 +130,13 @@ pipeline{
                 }
             }
         }
+        stage('test val pr'){
+            steps{
+                script{
+                    echo "valeur est ${env.CHANGE_ID}"
+                }
+            }
+        }
         stage("deploy review"){
             when {
                 expression {
@@ -152,13 +159,6 @@ pipeline{
                 }
             }
         } 
-        stage('test val pr'){
-            steps{
-                script{
-                    echo 'valeur est ${env.CHANGE_ID } '
-                }
-            }
-        }
         stage("verification avant stop  review"){
             when {
                 expression {
