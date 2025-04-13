@@ -26,3 +26,7 @@ variable "AWS_SECRET_KEY" {
   type = string
   default = ""
 }
+variable "ssh_key" {
+  type = string
+  description = "Private SSH key"
+}
