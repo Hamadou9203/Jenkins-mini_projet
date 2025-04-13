@@ -16,7 +16,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       PRIVATE_KEY = credentials('aws-credentials')
+       PRIVATE_KEY = credentials('aws-key')
        TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
