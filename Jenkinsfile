@@ -192,7 +192,7 @@ pipeline{
         stage("stop review"){
              when {
                 expression {
-                    GIT_BRANCH == 'origin/dev_features'  &&  return params.confirm_destroy == true
+                    GIT_BRANCH == 'origin/dev_features'  &&   params.confirm_destroy == true
                 }
             }
             steps{
