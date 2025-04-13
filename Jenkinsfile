@@ -149,7 +149,7 @@ pipeline{
                     sh 'cd /app/review-iac && terraform validate'
                     sh 'cd /app/review-iac && terraform apply -auto-approve'
                     sh 'sleep 60'
-                    def publicIp = sh(script: 'terraform output -raw ec2_public_ip', returnStdout: true).trim()
+                    def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
                     echo "Instance Public IP: ${publicIp}"
                     echo "deployement de la base de donnée mysql pour revue"
                   //  sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
