@@ -26,7 +26,7 @@ pipeline{
        AWS_ACCESS_KEY = credentials('aws-access-key-id')
        AWS_SECRET_KEY = credentials('aws-secret-access-key')
        TF_VAR_region         = 'us-east-1'
-       TF_VAR_ssh_key = "${env.PRIVATE_KEY}"
+       
     }
    
     stages{
@@ -164,7 +164,7 @@ pipeline{
                     sh 'sleep 20'
                     sh 'cd /app/review-iac && terraform validate'
                     sh """
-                     cd /app/review-iac && terraform apply -auto-approve 
+                     cd /app/review-iac && terraform apply -auto-approve -var="ssh_key=$PRIVATE_KEY_PSW"
                      """
                     sh 'sleep 60'
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
