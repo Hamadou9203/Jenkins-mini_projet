@@ -152,7 +152,7 @@ pipeline{
                     def publicIp = sh(script: 'terraform output -raw ec2_public_ip', returnStdout: true)
                     echo "Instance Public IP: ${publicIp}"
                     echo "deployement de la base de donnée mysql pour revue"
-                    sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
+                  //  sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
                     echo "deploiement de l'application pour la revue"
                     deploy("review", "${publicIp }", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
                 }
