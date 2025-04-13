@@ -164,7 +164,7 @@ pipeline{
                     sh 'sleep 20'
                     sh 'cd /app/review-iac && terraform validate'
                     sh """
-                     cd /app/review-iac && terraform apply -auto-approve -var="ssh_key=$PRIVATE_KEY_PSW"
+                     cd /app/review-iac && terraform apply -auto-approve -var="ssh_key=${PRIVATE_KEY}"
                      """
                     sh 'sleep 60'
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
