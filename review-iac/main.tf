@@ -5,7 +5,6 @@ terraform {
       version = "5.87.0"
     }
   }
-  required_version = "1.10.5"
 }
 provider "aws" {
   alias                    = "east"
