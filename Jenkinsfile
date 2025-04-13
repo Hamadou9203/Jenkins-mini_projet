@@ -29,7 +29,7 @@ pipeline{
     }
    
     stages{
-        stage('recuperer les codes  git'){
+        stage('recuperer les codes git'){
             steps{
                 script{
                  checkout scm
