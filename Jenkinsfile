@@ -133,7 +133,8 @@ pipeline{
         stage("deploy review"){
             agent {
                docker{
-                  image 'hashicorp/terraform' 
+                  image 'jenkins/jnlp-agent-terraform' 
+                  args '-v /tmp/app:/app '
                 }
             }
             when{
