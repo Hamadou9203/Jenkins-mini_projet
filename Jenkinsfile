@@ -153,6 +153,7 @@ pipeline{
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
                     echo "Instance Public IP: ${publicIp}"
                     echo "deployement de la base de donnée mysql pour revue"
+                    deploydb( "${env.publicIp}", "${env.MYSQL_CONTAINER}", "app/data/create.sql", "${env.SSH_USER}" )
                   //  sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
                     echo "deploiement de l'application pour la revue"
                     deploy("review", "${publicIp }", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
@@ -312,4 +313,17 @@ def test(envrt, url, extport){
    sh 'apk --no-cache  add curl'
    echo " test ${envrt}"
    sh " curl http://${url}:$extport "
+}
+
+def deploydb( url, containerName, dir_db, sshUser ){
+    def pullcmd="docker pull mysql"
+    def stopcmd=" docker stop $containerName || echo 'Container not running'"
+    def rmvcmd=" docker rm $containerName || echo 'Container not found'"
+    def runcmd="docker run -d -p 3306:3306 -v $dir_db:/docker-entrypoint-initdb.d/create.sql --name $containerName mysql"
+    sshagent(['aws-credentials']){
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${stopcmd}"
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${rmvcmd}"
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${pullcmd}"
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${runcmd}"
+}
 }
