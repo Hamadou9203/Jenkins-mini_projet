@@ -14,7 +14,7 @@ variable "tags" {
   type        = map(any)
   description = "value tag"
   default = {
-    Name = "ec2-tag"
+    Name = "ec2-review"
   }
 
 }
