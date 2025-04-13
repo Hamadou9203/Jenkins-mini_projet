@@ -33,7 +33,7 @@ data "aws_ami" "this" {
   }
   }
 
-resource "aws_instance" "this" {
+resource "aws_instance" "instance" {
   ami             = data.aws_ami.this.id
   instance_type   = var.type_instance
   key_name        = "Giltab-us"
