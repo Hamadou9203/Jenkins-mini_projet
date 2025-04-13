@@ -40,16 +40,13 @@ resource "aws_instance" "this" {
   tags            = var.tags
   security_groups = [aws_security_group.allow_http_https_ssh.name]
 
-   user_data = <<EOF
-
+   user_data = <<-EOF
    #!/bin/bash
    curl -fsSL https://get.docker.com -o install-docker.sh
    sh install-docker.sh --dry-run
    sudo sh install-docker.sh
    sudo usermod -aG docker ubuntu
-   
-
-    EOF
+  EOF
 }
 resource "aws_security_group" "allow_http_https_ssh" {
   name = "jenkins-sg-12"
