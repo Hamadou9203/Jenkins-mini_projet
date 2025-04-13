@@ -47,6 +47,24 @@ resource "aws_instance" "instance" {
    sudo sh install-docker.sh
    sudo usermod -aG docker ubuntu
   EOF
+    
+  provisioner "remote-exec" {
+
+    inline = [
+      "mkdir -p /app/data" 
+    ]
+
+  }
+  provisioner "file" {
+    source      = "/app/src/ressources/database/create.sql"
+    destination = "/app/data/create.sql"
+}
+  connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = var.ssh_key  # Utiliser la variable Terraform pour la clé
+      host        = self.public_ip
+    }
 }
 resource "aws_security_group" "allow_http_https_ssh" {
   name = "jenkins-sg-12"
