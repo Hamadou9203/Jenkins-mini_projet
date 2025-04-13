@@ -16,7 +16,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       SSH_KEY = credentials('aws-credentials')
+       TF_VAR_ssh_key = credentials('aws-credentials')
        TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
@@ -132,6 +132,20 @@ pipeline{
                 }
             }
         }
+        stage('release'){
+            environment{
+               DOCKERHUB_PWD = credentials('dockerhub-credentials')
+            }
+            steps{
+                script{
+                   sh '''
+                      echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER --password-stdin
+                      docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:$TAG
+                      docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
+                   '''
+                }
+            }
+        }
         stage("deploy review"){
             agent {
                docker{
@@ -161,10 +175,9 @@ pipeline{
             }
         }
         stage("verification avant stop  review"){
-            when {
-                expression {
-                    return env.CHANGE_ID != null  // Vérifie si c'est une PR (CHANGE_ID est défini uniquement pour les PR)
-                }
+            when{
+              expression { GIT_BRANCH == 'origin/dev_features' }
+              
             }
             steps {
                 script {
@@ -179,7 +192,7 @@ pipeline{
         stage("stop review"){
              when {
                 expression {
-                    return env.CHANGE_ID != null  &&  params.confirm_destroy == true
+                    GIT_BRANCH == 'origin/dev_features'  &&  return params.confirm_destroy == true
                 }
             }
             steps{
@@ -189,20 +202,7 @@ pipeline{
                 }
             }
         }
-        stage('release'){
-            environment{
-               DOCKERHUB_PWD = credentials('dockerhub-credentials')
-            }
-            steps{
-                script{
-                   sh '''
-                      echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER --password-stdin
-                      docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:$TAG
-                      docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
-                   '''
-                }
-            }
-        }
+        
         stage("Deploy-staging"){
             when{
               expression { GIT_BRANCH == 'origin/main' }
