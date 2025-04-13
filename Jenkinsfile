@@ -16,7 +16,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       TF_VAR_ssh_key = credentials('aws-credentials')
+       PRIVATE_KEY = credentials('aws-credentials')
        TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
@@ -159,10 +159,11 @@ pipeline{
             }
             steps{
                 script{
+                    echo "Private Key: ${PRIVATE_KEY}"
                     sh' cd /app/review-iac && terraform init'
                     sh 'sleep 20'
                     sh 'cd /app/review-iac && terraform validate'
-                    sh 'cd /app/review-iac && terraform apply -auto-approve'
+                    sh 'cd /app/review-iac && terraform apply -auto-approve -var ssh_key=${PRIVATE_KEY}'
                     sh 'sleep 60'
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
                     echo "Instance Public IP: ${publicIp}"
