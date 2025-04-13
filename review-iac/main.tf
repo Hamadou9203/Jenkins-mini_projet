@@ -13,6 +13,16 @@ provider "aws" {
   secret_key = var.AWS_SECRET_KEY
 
 }
+terraform {
+  backend "s3" {
+    bucket = "terraform-backend-hamadou"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+    
+
+ 
+  }
+}
 data "aws_ami" "this" {
   most_recent = true
   owners      = ["099720109477"]
@@ -42,7 +52,7 @@ resource "aws_instance" "this" {
     EOF
 }
 resource "aws_security_group" "allow_http_https_ssh" {
-  name = "jenkins-sg"
+  name = "jenkins-sg-12"
 
   ingress {
     protocol    = "tcp"
