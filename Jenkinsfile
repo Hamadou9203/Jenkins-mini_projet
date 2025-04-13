@@ -24,6 +24,7 @@ pipeline{
        ROOT_PASSWORD=credentials('mysql-password')
        AWS_ACCESS_KEY = credentials('aws-access-key-id')
        AWS_SECRET_KEY = credentials('aws-secret-access-key')
+       TF_VAR_region         = 'us-east-1'
     }
    
     stages{
