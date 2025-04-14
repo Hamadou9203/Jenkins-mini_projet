@@ -1,4 +1,4 @@
-pipeline{
+'pipeline{
     agent {
                docker{
                   image 'docker:dind'
@@ -16,7 +16,6 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       PRIVATE_KEY = credentials('aws-key')
        TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
@@ -160,11 +159,12 @@ pipeline{
             }
             steps{
                 script{
+                    withCredentials([sshUserPrivateKey(credentialsId: 'aws-credentials', keyFileVariable: 'PRIVATE_KEY')]) {
                     sh' cd /app/review-iac && terraform init'
                     sh 'sleep 20'
                     sh 'cd /app/review-iac && terraform validate'
                     sh """
-                     cd /app/review-iac && terraform apply -auto-approve -var="ssh_key=${env.PRIVATE_KEY}"
+                     cd /app/review-iac && terraform apply -auto-approve -var="ssh_key=${PRIVATE_KEY}"
                      """
                     sh 'sleep 60'
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
@@ -175,6 +175,7 @@ pipeline{
                     echo "deploiement de l'application pour la revue"
                     deploy("review", "${publicIp }", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
                 }
+                }       
             }
         }
         stage("verification avant stop  review"){
