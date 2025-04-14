@@ -196,6 +196,7 @@ pipeline{
                     input message: 'Confirmez-vous la destruction des ressources ?', parameters: [
                         booleanParam(defaultValue: true, description: 'Confirmer la destruction des ressources', name: 'confirm_destroy')
                     ]
+                    echo "Paramètre confirm_destroy: ${params.confirm_destroy}"
                 }
             }
 
