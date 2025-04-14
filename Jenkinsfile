@@ -17,7 +17,7 @@ pipeline{
        INT_PORT= "8080"
        DOMAIN="172.17.0.1"
        SSH_USER="ubuntu"
-       TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}".replaceAll('^origin/', '')
+       TAG="${env.GIT_BRANCH}-${env.BUILD_ID}".replaceAll('^origin/', '')
        REPO= "/tmp/app"
        SONARQUBE_URL  = "sonarcloud.io"
        STG_URL="ec2-18-208-223-232.compute-1.amazonaws.com"
@@ -142,7 +142,9 @@ pipeline{
                    sh '''
                       echo $DOCKERHUB_PWD | docker login -u $REGISTRY_USER --password-stdin
                       docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:$TAG
+                      docker tag $IMAGE_NAME:$TAG $REGISTRY_USER/$IMAGE_NAME:latest
                       docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
+                      docker push $REGISTRY_USER/$IMAGE_NAME:latest
                    '''
                 }
             }
@@ -179,7 +181,7 @@ pipeline{
                   }        
             }
         }
-        stage("verification avant stop  review"){
+        stage("go stop  review"){
             agent {
                docker{
                   image 'jenkins/jnlp-agent-terraform' 
@@ -196,31 +198,19 @@ pipeline{
                     input message: 'Confirmez-vous la destruction des ressources ?', parameters: [
                         booleanParam(defaultValue: true, description: 'Confirmer la destruction des ressources', name: 'confirm_destroy')
                     ]
-                    echo "Paramètre confirm_destroy: ${params.confirm_destroy}"
+                    echo "Paramètre confirm_destroy: ${userInput['confirm_destroy']}"
+                    // Vérifie si l'utilisateur a confirmé la destruction
+                    if (userInput['confirm_destroy']) {
+                        echo "Les ressources seront détruites."
+                    } else {
+                        echo "La destruction des ressources a été annulée."
+                        sh 'cd ${TERRAFORM_DIR} && terraform destroy -auto-approve'
+                    }
                 }
             }
 
         }
-        stage("stop review"){
-            agent {
-               docker{
-                  image 'jenkins/jnlp-agent-terraform' 
-                  args '-v /tmp/app:/app '
-                }
-            }
-             when {
-                expression {
-                      GIT_BRANCH == 'origin/dev_features' && params.confirm_destroy == true
-                }
-            }
-            steps{
-                script{
-                    echo "destruction des ressources"
-                    sh 'cd ${TERRAFORM_DIR} && terraform destroy -auto-approve'
-                }
-            }
-        }
-        
+    
         stage("Deploy-staging"){
             when{
               expression { GIT_BRANCH == 'origin/main' }
