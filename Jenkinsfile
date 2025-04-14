@@ -166,9 +166,7 @@ pipeline{
                     sh' cd ${TERRAFORM_DIR} && terraform init'
                     sh 'sleep 20'
                     sh 'cd ${TERRAFORM_DIR} && terraform validate'
-                    sh """
-                     cd ${TERRAFORM_DIR} && terraform apply -auto-approve -var='ssh_key=${PRIVATE_KEY}'
-                     """
+                    sh 'cd ${TERRAFORM_DIR} && terraform apply -auto-approve -var="ssh_key=${PRIVATE_KEY}" '
                     sh 'sleep 60'
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
                     echo "Instance Public IP: ${publicIp}"
@@ -203,9 +201,7 @@ pipeline{
                     if (userInput) {
                         echo "Les ressources seront détruites."
                         withCredentials([sshUserPrivateKey(credentialsId: 'aws-credentials', keyFileVariable: 'PRIVATE_KEY')]) {
-                        sh """
-                        cd ${TERRAFORM_DIR} && terraform destroy -auto-approve -var='ssh_key=${PRIVATE_KEY}'
-                        """
+                        sh 'cd ${TERRAFORM_DIR} && terraform destroy -auto-approve -var="ssh_key=${PRIVATE_KEY}" '
                         }
                     } else {
                         echo "La destruction des ressources a été annulée."
