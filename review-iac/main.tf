@@ -67,7 +67,7 @@ resource "aws_instance" "instance" {
     }
 }
 resource "aws_security_group" "allow_http_https_ssh" {
-  name = "jenkins-sg-12"
+  name = "jenkins-sg-14"
 
   ingress {
     protocol    = "tcp"
