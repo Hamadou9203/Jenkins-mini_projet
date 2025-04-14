@@ -51,8 +51,8 @@ pipeline{
             steps{
                 script{
                     sh '''
-                    docker stop ${MYSQL_CONTAINER}  || echo "no container is running"
-                    docker rm ${MYSQL_CONTAINER}  || echo "no container is running"
+                    docker stop ${MYSQL_CONTAINER}  || echo " container is not running"
+                    docker rm ${MYSQL_CONTAINER}  || echo " container is not running"
                     '''
                     sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
                 }
