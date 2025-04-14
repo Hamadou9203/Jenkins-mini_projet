@@ -1,2 +1,2 @@
 # PayMyBuddy app
-this app
+this app is deploy using jenkins pipeline
