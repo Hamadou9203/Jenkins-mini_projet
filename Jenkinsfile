@@ -195,7 +195,7 @@ pipeline{
             steps {
                 script {
                     // Attendre une action manuelle pour confirmer la destruction des ressources
-                    input message: 'Confirmez-vous la destruction des ressources ?', parameters: [
+                    def userInput = input message: 'Confirmez-vous la destruction des ressources ?', parameters: [
                         booleanParam(defaultValue: true, description: 'Confirmer la destruction des ressources', name: 'confirm_destroy')
                     ]
                     echo "Paramètre confirm_destroy: ${userInput['confirm_destroy']}"
