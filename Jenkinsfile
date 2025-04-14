@@ -54,8 +54,8 @@ pipeline{
             steps{
                 script{
                     sh '''
-                    docker stop ${MYSQL_CONTAINER}  || echo "no container is running"
-                    docker rm ${MYSQL_CONTAINER}  || echo "no container is running"
+                    docker stop ${MYSQL_CONTAINER}  || echo " container is not running"
+                    docker rm ${MYSQL_CONTAINER}  || echo " container is not running"
                     '''
                     sh 'docker run --name ${MYSQL_CONTAINER} -p 3306:3306 -v ${INIT_DB}:/docker-entrypoint-initdb.d/create.sql -e MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD -d mysql'
                 }
@@ -133,6 +133,7 @@ pipeline{
                 }
             }
         }
+
         stage('release'){
             environment{
                DOCKERHUB_PWD = credentials('dockerhub-credentials')
@@ -146,9 +147,8 @@ pipeline{
                       docker push $REGISTRY_USER/$IMAGE_NAME:$TAG
                       docker push $REGISTRY_USER/$IMAGE_NAME:latest
                    '''
-                }
-            }
-        }
+
+        
         stage("deploy review"){
             agent {
                docker{
@@ -178,18 +178,16 @@ pipeline{
                 }
                   }        
             }
+
         }
         stage("go stop  review"){
             agent {
                docker{
                   image 'jenkins/jnlp-agent-terraform' 
                   args '-v /tmp/app:/app '
-                }
-            }
-            when{
-              expression { GIT_BRANCH == 'origin/dev_features' }
-              
-            }
+
+        } 
+       
             steps {
                 script {
                     // Attendre une action manuelle pour confirmer la destruction des ressources
