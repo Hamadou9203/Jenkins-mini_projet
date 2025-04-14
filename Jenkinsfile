@@ -310,7 +310,7 @@ def deploy(envrt, url, dockerUser, imageName, tag, containerName,extport,intport
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${rmvcmd}"
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${pullcmd}"
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${runcmd}"
-}
+    }
 }
 
 def test(envrt, url, extport){
