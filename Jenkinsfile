@@ -148,7 +148,9 @@ pipeline{
                       docker push $REGISTRY_USER/$IMAGE_NAME:latest
                    '''
 
-        
+                }
+            }
+        }
         stage("deploy review"){
             agent {
                docker{
@@ -186,8 +188,8 @@ pipeline{
                   image 'jenkins/jnlp-agent-terraform' 
                   args '-v /tmp/app:/app '
 
-        } 
-       
+                 } 
+            }
             steps {
                 script {
                     // Attendre une action manuelle pour confirmer la destruction des ressources
@@ -208,8 +210,8 @@ pipeline{
                 }
             }
 
+        
         }
-    
         stage("Deploy-staging"){
             when{
               expression { GIT_BRANCH == 'origin/main' }
