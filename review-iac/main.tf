@@ -5,14 +5,23 @@ terraform {
       version = "5.87.0"
     }
   }
-  required_version = "1.10.5"
 }
 provider "aws" {
-  alias                    = "east"
+  
   region                   = var.region
   access_key = var.AWS_ACCESS_KEY
   secret_key = var.AWS_SECRET_KEY
 
+}
+terraform {
+  backend "s3" {
+    bucket = "terraform-backend-hamadou"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+    
+
+ 
+  }
 }
 data "aws_ami" "this" {
   most_recent = true
@@ -24,26 +33,41 @@ data "aws_ami" "this" {
   }
   }
 
-resource "aws_instance" "this" {
+resource "aws_instance" "instance" {
   ami             = data.aws_ami.this.id
   instance_type   = var.type_instance
   key_name        = "Giltab-us"
   tags            = var.tags
   security_groups = [aws_security_group.allow_http_https_ssh.name]
 
-   user_data = <<EOF
-
+   user_data = <<-EOF
    #!/bin/bash
    curl -fsSL https://get.docker.com -o install-docker.sh
    sh install-docker.sh --dry-run
    sudo sh install-docker.sh
    sudo usermod -aG docker ubuntu
-   
+  EOF
+    
+  provisioner "remote-exec" {
 
-    EOF
+    inline = [
+      "mkdir -p /tmp/data" 
+    ]
+
+  }
+  provisioner "file" {
+    source      = "/app/src/main/resources/database/create.sql"
+    destination = "/tmp/data/create.sql"
+}
+  connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file(var.ssh_key)  # Utiliser la variable Terraform pour la clé
+      host        = self.public_ip
+    }
 }
 resource "aws_security_group" "allow_http_https_ssh" {
-  name = "jenkins-sg"
+  name = "jenkins-sg-14"
 
   ingress {
     protocol    = "tcp"

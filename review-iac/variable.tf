@@ -6,7 +6,7 @@ variable "region" {
 
 variable "type_instance" {
   type    = string
-  default = "t2.nano"
+  default = "t2.micro"
 
 }
 
@@ -14,7 +14,7 @@ variable "tags" {
   type        = map(any)
   description = "value tag"
   default = {
-    Name = "ec2-tag"
+    Name = "ec2-review"
   }
 
 }
@@ -25,4 +25,8 @@ variable "AWS_ACCESS_KEY" {
 variable "AWS_SECRET_KEY" {  
   type = string
   default = ""
+}
+variable "ssh_key" {
+  type = string
+  description = "Private SSH key"
 }
