@@ -337,6 +337,6 @@ def deploydb( url, containerName, dir_db, sshUser, psw ){
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${stopcmd}"
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${rmvcmd}"
     sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${pullcmd}"
-    sh 'ssh -o StrictHostKeyChecking=no "$sshUser@${url}" "${runcmd}"'
+    sh "ssh -o StrictHostKeyChecking=no $sshUser@${url} ${runcmd}"
 }
 }
