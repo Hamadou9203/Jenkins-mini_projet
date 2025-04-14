@@ -56,7 +56,7 @@ resource "aws_instance" "instance" {
 
   }
   provisioner "file" {
-    source      = "/app/src/ressources/database/create.sql"
+    source      = "/app/src/main/resources/database/create.sql"
     destination = "/tmp/data/create.sql"
 }
   connection {
