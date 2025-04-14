@@ -159,7 +159,7 @@ pipeline{
               
             }
             steps{
-                script{
+                
                     withCredentials([sshUserPrivateKey(credentialsId: 'aws-credentials', keyFileVariable: 'PRIVATE_KEY')]) {
                     sh' cd ${TERRAFORM_DIR} && terraform init'
                     sh 'sleep 20'
@@ -176,7 +176,7 @@ pipeline{
                     echo "deploiement de l'application pour la revue"
                     deploy("review", "${publicIp }", "${env.REGISTRY_USER}", "${env.IMAGE_NAME}", "${env.TAG}", "${env.CONTAINER_NAME}", "${env.EXT_PORT}", "${env.INT_PORT}", "${env.SSH_USER}")
                 }
-                }       
+                       
             }
         }
         stage("verification avant stop  review"){
