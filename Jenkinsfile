@@ -180,6 +180,12 @@ pipeline{
             }
         }
         stage("verification avant stop  review"){
+            agent {
+               docker{
+                  image 'jenkins/jnlp-agent-terraform' 
+                  args '-v /tmp/app:/app '
+                }
+            }
             when{
               expression { GIT_BRANCH == 'origin/dev_features' }
               
@@ -203,7 +209,7 @@ pipeline{
             }
              when {
                 expression {
-                      params.confirm_destroy == true
+                      GIT_BRANCH == 'origin/dev_features' && params.confirm_destroy == true
                 }
             }
             steps{
