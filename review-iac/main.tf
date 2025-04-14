@@ -51,13 +51,13 @@ resource "aws_instance" "instance" {
   provisioner "remote-exec" {
 
     inline = [
-      "mkdir -p /app/data" 
+      "mkdir -p /tmp/data" 
     ]
 
   }
   provisioner "file" {
     source      = "/app/src/ressources/database/create.sql"
-    destination = "/app/data/create.sql"
+    destination = "/tmp/data/create.sql"
 }
   connection {
       type        = "ssh"
