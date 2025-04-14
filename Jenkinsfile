@@ -190,6 +190,10 @@ pipeline{
 
                  } 
             }
+            when{
+              expression { GIT_BRANCH != 'origin/main' }
+              
+            }
             steps {
                 script {
                     // Attendre une action manuelle pour confirmer la destruction des ressources
