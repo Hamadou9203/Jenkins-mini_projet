@@ -202,7 +202,9 @@ pipeline{
                     // Vérifie si l'utilisateur a confirmé la destruction
                     if (userInput) {
                         echo "Les ressources seront détruites."
-                        sh 'cd ${TERRAFORM_DIR} && terraform destroy -auto-approve'
+                        sh """
+                        cd ${TERRAFORM_DIR} && terraform destroy -auto-approve -var="ssh_key=${PRIVATE_KEY}"
+                        """
                     } else {
                         echo "La destruction des ressources a été annulée."
                         
