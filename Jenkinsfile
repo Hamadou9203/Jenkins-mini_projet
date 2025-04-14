@@ -9,6 +9,7 @@ pipeline{
        MYSQL_CONTAINER = 'mysql-pay' 
        INIT_DB= '/tmp/app/src/main/resources/database/create.sql'
        DB_DIR='/tmp/create.sql'
+       TERRAFORM_DIR = '/app/review-iac'
        IMAGE_NAME= 'paymybuddy-img'
        REGISTRY_USER= 'meskine'
        CONTAINER_NAME= 'paymybuddy-jenkins'
@@ -160,11 +161,11 @@ pipeline{
             steps{
                 script{
                     withCredentials([sshUserPrivateKey(credentialsId: 'aws-credentials', keyFileVariable: 'PRIVATE_KEY')]) {
-                    sh' cd /app/review-iac && terraform init'
+                    sh' cd ${TERRAFORM_DIR} && terraform init'
                     sh 'sleep 20'
-                    sh 'cd /app/review-iac && terraform validate'
+                    sh 'cd ${TERRAFORM_DIR} && terraform validate'
                     sh """
-                     cd /app/review-iac && terraform apply -auto-approve -var="ssh_key=${PRIVATE_KEY}"
+                     cd ${TERRAFORM_DIR} && terraform apply -auto-approve -var="ssh_key=${PRIVATE_KEY}"
                      """
                     sh 'sleep 60'
                     def publicIp = sh(script: 'cd /app/review-iac && terraform output -raw ec2_public_ip', returnStdout: true).trim()
@@ -202,7 +203,7 @@ pipeline{
             steps{
                 script{
                     echo "destruction des ressources"
-                    sh 'cd /app/review-iac && terraform destroy -auto-approve'
+                    sh 'cd ${TERRAFORM_DIR} && terraform destroy -auto-approve'
                 }
             }
         }
