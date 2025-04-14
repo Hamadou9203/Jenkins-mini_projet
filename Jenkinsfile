@@ -295,6 +295,10 @@ pipeline{
 
         failure {
             echo 'Échec du déploiement'
+            sh """
+            docker rmi $IMAGE_NAME:$TAG
+            docker rmi $REGISTRY_USER/$IMAGE_NAME:$TAG
+            """
         }
     }
 }
