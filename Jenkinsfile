@@ -200,7 +200,7 @@ pipeline{
                     ]
                     echo "Paramètre confirm_destroy: ${userInput['confirm_destroy']}"
                     // Vérifie si l'utilisateur a confirmé la destruction
-                    if (userInput['confirm_destroy']) {
+                    if (userInput) {
                         echo "Les ressources seront détruites."
                     } else {
                         echo "La destruction des ressources a été annulée."
