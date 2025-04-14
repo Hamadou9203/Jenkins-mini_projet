@@ -62,7 +62,7 @@ resource "aws_instance" "instance" {
   connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = var.ssh_key  # Utiliser la variable Terraform pour la clé
+      private_key = file(var.ssh_key)  # Utiliser la variable Terraform pour la clé
       host        = self.public_ip
     }
 }
